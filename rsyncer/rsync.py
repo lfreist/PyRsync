@@ -105,8 +105,8 @@ class Syncer:
         """
         Parse kwarg to string.
         Examples:
-        > Syncer._parse_arg("exclude", "path/")              -> ["--exclude path/"]
-        > Syncer._parse_arg("exclude", ["path/1", "path/2"]) -> ["--exclude path/1 --exclude path/2"]
+        > Syncer._parse_arg("exclude", "path/")              -> ["--exclude", "path/"]
+        > Syncer._parse_arg("exclude", ["path/1", "path/2"]) -> ["--exclude", "path/1", "--exclude", "path/2"]
         > Syncer._parse_arg("verbose")                       -> ["--verbose"]
         > Syncer._parse_arg("v")                             -> ["-v"]
 
@@ -122,8 +122,8 @@ class Syncer:
         else:
             name = f"--{name}"
         if isinstance(value, Iterable) and not isinstance(value, str):
-            return list(map(lambda v: f"{name} {v}", value))
-        return [f"{name}"] if value is None else [f"{name} {value}"]
+            return [arg for v in value for arg in [f"{name}", f"{v}"]]
+        return [f"{name}"] if value is None else [f"{name}", f"{value}"]
 
     def _reformat_dir(self, _dir: Union[Iterable[str], str], server: str = None) -> str:
         """
